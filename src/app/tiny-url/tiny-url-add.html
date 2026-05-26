@@ -1,0 +1,159 @@
+<div class="container">
+
+    <h1>Tiny URL</h1>
+
+    <div class="top-card">
+
+        <div class="url-box"  >
+<form [formGroup]="userForm">
+            <input
+                type="text"
+                formControlName="urlname"
+                placeholder="Enter URL to shorten"
+            />
+ @if (urlnameCtrl?.touched && urlnameCtrl?.errors) {
+      <div class="error-messages" style="color: red; font-size: 12px;">
+        
+        <!-- Built-in Validator Messages -->
+        @if (urlnameCtrl?.errors?.['required']) {
+          <p>url is required.</p>
+        }
+        @if (urlnameCtrl?.errors?.['maxLength']) {
+          <p>url must be at least 240 characters long.</p>
+        }
+
+        <!-- Backend / Custom Validator Message -->
+        @if (urlnameCtrl?.errors?.['alreadyExists']) {
+          <p>This username is already taken.</p>
+        }
+        
+      </div>
+    }
+            <div class="private-box">
+
+                <input 
+                 formControlName="isPrivate"
+                    type="checkbox"
+                   
+                />
+
+                <label>Is Private</label>
+
+            </div>
+</form>
+        </div>
+
+        <button
+            class="generate-btn"
+            (click)="generateUrl()">
+
+            Generate
+
+        </button>
+
+    </div>
+
+    @if(generatedShortUrl){
+
+    <div class="result">
+
+        <div class="result-left">
+
+            <span class="result-title">
+                Short URL:
+            </span>
+
+            <a
+               (click)="clickNewUrl($event)">
+                {{generatedShortUrl}}
+
+            </a>
+
+        </div>
+
+        <button
+           (click)="copyShortUrl(generatedShortUrl)"
+            class="copy-btn">
+
+            Copy
+
+        </button>
+
+    </div>
+
+    }
+
+    <h2 class="public-title">
+        Public URLs
+    </h2>
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            [(ngModel)]="searchText"
+            (blur)="searchUrls()"
+            placeholder="Search URLs..."
+        />
+
+    </div>
+
+    <div class="url-list">
+
+        @for(item of tinyUrls; track item.Id){
+
+        <div class="url-card">
+
+            <div class="left-section">
+
+                <div class="short-url">
+<!-- [href]="item.OriginalUrl"
+                        target="_blank" -->
+                    <a
+                        
+                        (click)="updateClick(item,$event)">
+
+                        {{item.ShortCode}}
+
+                    </a>
+
+                    <button
+                        class="copy-btn"
+                        
+                        (click)="copyShortUrl(item.ShortCode)">
+
+                        Copy
+
+                    </button>
+
+                    <span class="clicks">
+
+                        {{item.Clicks}} Clicks
+
+                    </span>
+
+                </div>
+
+                <div class="original-url">
+
+                    {{item.OriginalUrl}}
+
+                </div>
+
+            </div>
+
+            <button
+                class="delete-btn"
+                (click)="deleteUrl(item.Id ?? 0)">
+
+                Delete
+
+            </button>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>
