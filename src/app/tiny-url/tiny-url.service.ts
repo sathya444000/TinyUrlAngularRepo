@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 })
   export class TinyUrlService{
     
-     apiUrl = 'https://localhost:7078/api/';
+     apiUrl = 'https://tiny-url-api.azurewebsites.net/';
 
   constructor(private http: HttpClient) { }
 
