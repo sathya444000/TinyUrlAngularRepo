@@ -1,0 +1,41 @@
+trigger:
+- main
+pool:
+  vmImage: 'ubuntu-latest'
+variables:
+  appName: 'tinyurlangular'
+  azureSubscription: 'serviceconn1'
+steps:
+- task: NodeTool@0
+  displayName: 'Install Node.js 20'
+  inputs:
+    versionSpec: '20.x'
+- script: |
+    npm ci
+    npm run build -- --configuration production
+  displayName: 'Build Angular'
+# ✅ Zip only the browser folder, not entire project
+- task: ArchiveFiles@2
+  displayName: 'Zip browser folder'
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/dist/tiny-url-angular/browser'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/angular-app.zip'
+    replaceExistingArchive: true
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'angular-dist'
+# ✅ Fixed package path + startup command for Linux
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
+  inputs:
+    azureSubscription: '$(azureSubscription)'
+    appType: 'webAppLinux'
+    appName: '$(appName)'
+    package: '$(Build.ArtifactStagingDirectory)/angular-app.zip'
+    runtimeStack: 'NODE|20-lts'
+    startUpCommand: 'npx serve -s /home/site/wwwroot -l 8080'
+    appSettings: '-SCM_DO_BUILD_DURING_DEPLOYMENT false'
