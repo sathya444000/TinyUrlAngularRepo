@@ -23,7 +23,18 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+
+                {
+    "glob": "web.config",
+    "input": "src",
+    "output": "."
+  },
+  {
+    "glob": ".deployment",
+    "input": ".",
+    "output": "."
+  }
             ],
             "styles": [
               "src/styles.css"

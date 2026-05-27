@@ -43,6 +43,7 @@ export class TinyURlAddComponent implements OnInit {
 this.userForm.patchValue({
   urlname: '',
   isPrivate: false
+  
 });    this.service.getAllUrls().subscribe({
       next: (response:TinyUrl[]) => {
         console.log(response);
