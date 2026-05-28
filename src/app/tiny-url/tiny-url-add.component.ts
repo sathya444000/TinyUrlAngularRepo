@@ -23,7 +23,7 @@ export class TinyURlAddComponent implements OnInit {
   generatedShortUrl: string = '';
 
   publicUrls: any[] = [];
-
+  showErrorMessage:boolean=false;
   filteredUrls: any[] = [];
   shortUrl: string = '';
   searchText: string = '';
@@ -40,6 +40,7 @@ export class TinyURlAddComponent implements OnInit {
   }
 
   getAllUrl() {
+    this.showErrorMessage=false;
     this.service.getAllUrls().subscribe({
       next: (response: TinyUrl[]) => {
         console.log(response);
@@ -56,7 +57,11 @@ export class TinyURlAddComponent implements OnInit {
 
   // Generate Tiny URL
   generateUrl(): void {
-    if (this.userForm.invalid) return;
+    if (this.userForm.invalid) {
+      this.showErrorMessage=true;
+      return;
+    }
+    this.showErrorMessage=false;
     if (!this.userForm.get('urlname')?.value) {
       alert('Please enter URL');
       return;
@@ -82,60 +87,50 @@ export class TinyURlAddComponent implements OnInit {
 
   }
   clickNewUrl(event: any) {
-    event.preventDefault()
+    event.preventDefault();
+    this.showErrorMessage=false;
     let originalData = this.filteredUrls.find(x => x.ShortCode == this.generatedShortUrl);
     window.open(originalData.OriginalUrl, '_blank')
   }
   // Copy URL
   updateClick(data: TinyUrl, event: any): void {
+    
     event.preventDefault();
+    this.showErrorMessage=false;
+    this.generatedShortUrl='';
     if (!data?.ShortCode) {
       return;
     }
-
-
     data.Clicks = (data.Clicks ?? 0) + 1;
-
     this.service.updateUrl(data)
       .subscribe({
-
         next: () => {
-
           console.log('Updated');
-
         },
-
         error: (error: any) => {
-
           console.error(error);
-
         }
 
       });
     window.open(data.OriginalUrl, '_blank')
-
   }
 
   // Delete URL
   deleteUrl(id: number) {
-
+    this.showErrorMessage=false;
+    this.generatedShortUrl='';
     if (!confirm('Are you sure to delete?')) {
       return;
     }
 
     this.service.deleteUrl(id).subscribe({
-
       next: () => {
-
         alert('Deleted Successfully');
-
         this.getAllUrl();
       },
 
       error: (error) => {
-
         console.log(error);
-
         alert('Delete Failed');
       }
     });
@@ -144,11 +139,11 @@ export class TinyURlAddComponent implements OnInit {
 
   // Search URL
   searchUrls(): void {
-
+    this.showErrorMessage=false;
+    this.generatedShortUrl='';
     if (!this.searchText) {
       this.tinyUrls = this.filteredUrls;
-      return
-
+      return;
     }
     this.tinyUrls = this.filteredUrls.filter(x => x.OriginalUrl.toLowerCase().includes(this.searchText.toLowerCase()) || x.ShortCode.toLowerCase().includes(this.searchText.toLocaleLowerCase()))
   }

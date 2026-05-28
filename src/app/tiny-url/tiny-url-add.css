@@ -91,7 +91,17 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+.error-result-box {
+  background: #FF7F7F;
+  border: 1px solid indianred;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 30px;
 
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+}
 .result-left {
   display: flex;
   gap: 10px;
@@ -217,4 +227,5 @@ body {
     align-items: flex-start;
   }
 
+  
 }
