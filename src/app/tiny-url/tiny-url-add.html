@@ -1,16 +1,20 @@
-<div class="container">
+<div class="main-container">
 
-    <h1>Tiny URL</h1>
+  <h1 class="title">Tiny URL</h1>
 
-    <div class="top-card">
+  <!-- Create URL Section -->
+  <div class="top-section">
 
-        <div class="url-box"  >
-<form [formGroup]="userForm">
-            <input
-                type="text"
-                formControlName="urlname"
-                placeholder="Enter URL to shorten"
-            />
+    <form [formGroup]="userForm" class="url-form">
+
+      <div class="input-group">
+
+        <input
+          type="text"
+          formControlName="urlname"
+          placeholder="Enter URL to shorten"
+          class="url-input"
+        />
  @if (urlnameCtrl?.touched && urlnameCtrl?.errors) {
       <div class="error-messages" style="color: red; font-size: 12px;">
         
@@ -29,131 +33,122 @@
         
       </div>
     }
-            <div class="private-box">
-
-                <input 
-                 formControlName="isPrivate"
-                    type="checkbox"
-                   
-                />
-
-                <label>Is Private</label>
-
-            </div>
-</form>
-        </div>
-
         <button
-            class="generate-btn"
-            (click)="generateUrl()">
-
-            Generate
-
+          type="button"
+          class="generate-btn"
+          (click)="generateUrl()"
+        >
+          Generate
         </button>
+
+      </div>
+
+      <div class="checkbox-section">
+
+        <input type="checkbox" formControlName="isPrivate" />
+
+        <label>Is Private</label>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- Result -->
+
+  @if(generatedShortUrl){
+
+  <div class="result-box">
+
+    <div class="result-left">
+
+      <span class="short-label">Short URL:</span>
+
+      <a (click)="clickNewUrl($event)">
+        {{generatedShortUrl}}
+      </a>
 
     </div>
 
-    @if(generatedShortUrl){
+    <button
+      class="copy-btn"
+      (click)="copyShortUrl(generatedShortUrl)"
+    >
+      Copy
+    </button>
 
-    <div class="result">
+  </div>
 
-        <div class="result-left">
+  }
 
-            <span class="result-title">
-                Short URL:
-            </span>
+  <!-- Search -->
 
-            <a
-               (click)="clickNewUrl($event)">
-                {{generatedShortUrl}}
+  <div class="search-section">
 
-            </a>
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (keyup)="searchUrls()"
+      placeholder="Search URLs..."
+      class="search-input"
+    />
+
+  </div>
+
+  <!-- Grid -->
+
+  <div class="url-grid">
+
+    @for(item of tinyUrls; track item.Id){
+
+    <div class="url-card">
+
+      <div class="card-header">
+
+        <a
+          class="short-url"
+          (click)="updateClick(item,$event)"
+        >
+          {{item.ShortCode}}
+        </a>
+
+        <div class="click-box">
+
+          {{item.Clicks}} Clicks
 
         </div>
 
+      </div>
+
+      <div class="original-url">
+
+        {{item.OriginalUrl}}
+
+      </div>
+
+      <div class="card-footer">
+
         <button
-           (click)="copyShortUrl(generatedShortUrl)"
-            class="copy-btn">
-
-            Copy
-
+          class="copy-btn"
+          (click)="copyShortUrl(item.ShortCode)"
+        >
+          Copy
         </button>
+
+        <button
+          class="delete-btn"
+          (click)="deleteUrl(item.Id ?? 0)"
+        >
+          Delete
+        </button>
+
+      </div>
 
     </div>
 
     }
 
-    <h2 class="public-title">
-        Public URLs
-    </h2>
-
-    <div class="search-box">
-
-        <input
-            type="text"
-            [(ngModel)]="searchText"
-            (blur)="searchUrls()"
-            placeholder="Search URLs..."
-        />
-
-    </div>
-
-    <div class="url-list">
-
-        @for(item of tinyUrls; track item.Id){
-
-        <div class="url-card">
-
-            <div class="left-section">
-
-                <div class="short-url">
-<!-- [href]="item.OriginalUrl"
-                        target="_blank" -->
-                    <a
-                        
-                        (click)="updateClick(item,$event)">
-
-                        {{item.ShortCode}}
-
-                    </a>
-
-                    <button
-                        class="copy-btn"
-                        
-                        (click)="copyShortUrl(item.ShortCode)">
-
-                        Copy
-
-                    </button>
-
-                    <span class="clicks">
-
-                        {{item.Clicks}} Clicks
-
-                    </span>
-
-                </div>
-
-                <div class="original-url">
-
-                    {{item.OriginalUrl}}
-
-                </div>
-
-            </div>
-
-            <button
-                class="delete-btn"
-                (click)="deleteUrl(item.Id ?? 0)">
-
-                Delete
-
-            </button>
-
-        </div>
-
-        }
-
-    </div>
+  </div>
 
 </div>
